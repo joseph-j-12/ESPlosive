@@ -7,10 +7,12 @@
 #include <memory>
 #include "GPhysics.h"
 #include "Arduino.h"
+#include "GCamera.h"
 /*
 Scene contains all the objects. It runs the tick for all the objects and components. 
 It connects rigidbodies and physics and also handles searching for children of an object
 */
+
 class GScene{
     public :
     std::vector<std::unique_ptr<GObject>> sceneObjects;
@@ -20,8 +22,8 @@ class GScene{
     void Tick_Objects(float DeltaTime);
     void Tick_Physics(float DeltaTime);
     void Begin();
-
     GPhysics physics;
+    GCamera cam;
 
     std::vector<std::unique_ptr<GObject>> GetChildrenOf(GObject* parentObj);
 

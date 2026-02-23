@@ -1,6 +1,6 @@
 #include "GScene.h"
-
-GScene::GScene() : physics(this)
+#include "GCamera.h"
+GScene::GScene() : physics(this), cam(this)
 {
 
 }
@@ -21,6 +21,7 @@ void GScene::Begin()
 
 void GScene::Tick_Objects(float DeltaTime)
 {
+    cam.Tick(DeltaTime);
     for (auto& obj : sceneObjects)
     {
         obj->Tick(DeltaTime);

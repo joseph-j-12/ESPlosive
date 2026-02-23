@@ -7,7 +7,7 @@
 #include "GComponent.h"
 #include <vector>
 #include <memory>
-#include "ColliderComp.h"
+#include "GColliderComp.h"
 
 // #include <stdio.h>
 // #include <iostream>

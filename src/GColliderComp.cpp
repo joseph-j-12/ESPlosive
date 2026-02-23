@@ -1,4 +1,4 @@
-#include "ColliderComp.h"
+#include "GColliderComp.h"
 #include "GObject.h"
 #include "GScene.h"
 #include "GPhysics.h"

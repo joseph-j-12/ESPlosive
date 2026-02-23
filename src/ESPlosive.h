@@ -6,10 +6,10 @@
 #include "GTransform.h"
 #include "GObject.h"
 #include "GComponent.h"
-#include "ColliderComp.h"
+#include "GColliderComp.h"
 #include "GPhysics.h"
 #include "GSpringComponent.h"
-
+#include "GCamera.h"
 #include "GSpatialHash.h"
 
 

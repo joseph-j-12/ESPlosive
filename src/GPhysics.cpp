@@ -2,7 +2,7 @@
 #include "GComponent.h"
 #include "GScene.h"
 #include "GObject.h"
-#include "ColliderComp.h"
+#include "GColliderComp.h"
 #include "GSpatialHash.h"
 #include <iostream>
 #include <cmath>

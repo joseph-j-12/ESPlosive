@@ -1,7 +1,7 @@
 #include "GSpatialHash.h"
 #include "GScene.h"
 #include "GPhysics.h"
-#include "ColliderComp.h"
+#include "GColliderComp.h"
 #include <iostream>
 void GSpatialHash::InsertCollider(GColliderComp* col, uint16_t colliderIndex)
 {
