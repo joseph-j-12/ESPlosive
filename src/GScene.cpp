@@ -1,5 +1,7 @@
 #include "GScene.h"
 #include "GCamera.h"
+#include <SPI.h>
+#include <TFT_eSPI.h>
 GScene::GScene() : physics(this), cam(this)
 {
 
@@ -43,4 +45,20 @@ std::vector<std::unique_ptr<GObject>> GScene::GetChildrenOf(GObject *parentObj)
 {
     std::vector<std::unique_ptr<GObject>> children;
     return children;
+}
+
+void GScene::RenderOnTFT(TFT_eSPI &tft)
+{
+    for (auto& obj : sceneObjects)
+    {
+        obj->RenderOnTFT(tft);    
+    }
+}
+
+void GScene::ClearTFT(TFT_eSPI &tft)
+{
+    for (auto& obj : sceneObjects)
+    {
+        obj->ClearTFT(tft);
+    }
 }

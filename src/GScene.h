@@ -34,6 +34,9 @@ class GScene{
         sceneObjects.push_back(std::move(newObj));
         return ptr;
     }
+
+    void RenderOnTFT(TFT_eSPI& tft);
+    void ClearTFT(TFT_eSPI& tft);
 };
 
 #endif

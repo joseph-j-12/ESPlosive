@@ -3,7 +3,8 @@
 
 #include "Vec2D.h"
 #include "GTransform.h"
-
+#include <SPI.h>
+#include <TFT_eSPI.h>
 class GObject;
 /*
 A Component is attached to GObject. Multiple components can be attached.
@@ -41,11 +42,16 @@ class GComponent{
             onEnabled();
         }
     }
-    
+    virtual void Render(TFT_eSPI& tft, uint16_t outlineColor, GObject* obj) {};
+    virtual void Clear(TFT_eSPI& tft, uint16_t color) {};
+    bool renderComponent = false;
+    bool clearComponent  = false;
+
     GObject *gobject;
     ComponentType _myCompType;
     private:
     bool componentEnabled;
+    
     
 
 };

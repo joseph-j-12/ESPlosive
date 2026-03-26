@@ -9,6 +9,9 @@
 #include <memory>
 #include "GColliderComp.h"
 
+#include <SPI.h>
+#include <TFT_eSPI.h>
+
 // #include <stdio.h>
 // #include <iostream>
 /*
@@ -60,6 +63,9 @@ public:
     virtual void Tick(float DeltaTime) {};
 
     virtual void OnCollision(GPhysics::Collision col, GColliderComp* otherObj) { };
+
+    virtual void RenderOnTFT(TFT_eSPI& tft);
+    virtual void ClearTFT(TFT_eSPI& tft, uint16_t color=TFT_BLACK);
 
     virtual ~GObject() = default;
 

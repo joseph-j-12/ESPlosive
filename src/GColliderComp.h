@@ -2,6 +2,8 @@
 #define HEADER_GColl
 
 #include "GComponent.h"
+#include <SPI.h>
+#include <TFT_eSPI.h>
 
 /*
 Collider class. derived from GComponent. can be added as a component to an object by doing
@@ -47,6 +49,10 @@ class GColliderComp : public GComponent{
 
     Vec2D lastSeenBoundingBoxMin;
     Vec2D lastSeenBoundingBoxMax;
+
+
+    void Render(TFT_eSPI& tft, uint16_t outlineColor, GObject* obj) override;
+    void Clear(TFT_eSPI& tft, uint16_t color) override;
     
 };
 #endif
