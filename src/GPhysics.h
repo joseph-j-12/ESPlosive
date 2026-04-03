@@ -13,6 +13,9 @@ class GColliderComp;
 class GPhysics
 {
 public:
+    float gravity = -15.8f;
+    float linearDamping = 0.1f;
+    float angularDamping = 0.05f;
     struct Collision{
         Vec2D point;
         Vec2D normal; //in the direction to push col2 out (col1 to col2)

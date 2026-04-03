@@ -11,6 +11,6 @@
 #include "GSpringComponent.h"
 #include "GCamera.h"
 #include "GSpatialHash.h"
-
+#include "GInput.h"
 
 #endif

@@ -16,12 +16,11 @@ It connects rigidbodies and physics and also handles searching for children of a
 class GScene{
     public :
     std::vector<std::unique_ptr<GObject>> sceneObjects;
-
     GScene();
 
-    void Tick_Objects(float DeltaTime);
-    void Tick_Physics(float DeltaTime);
-    void Begin();
+    virtual void Tick_Objects(float DeltaTime);
+    virtual void Tick_Physics(float DeltaTime);
+    virtual void Begin();
     GPhysics physics;
     GCamera cam;
 

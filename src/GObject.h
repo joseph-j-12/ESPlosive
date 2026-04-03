@@ -34,6 +34,8 @@ public:
 
     bool enabled;
 
+    bool clearedScreen;
+
     float invMass;
     float invMomentOfInertia;
 
@@ -64,7 +66,7 @@ public:
 
     virtual void OnCollision(GPhysics::Collision col, GColliderComp* otherObj) { };
 
-    virtual void RenderOnTFT(TFT_eSPI& tft);
+    virtual void RenderOnTFT(TFT_eSPI& tft, uint16_t outlineColor=TFT_RED); //override this function for custom rendering
     virtual void ClearTFT(TFT_eSPI& tft, uint16_t color=TFT_BLACK);
 
     virtual ~GObject() = default;

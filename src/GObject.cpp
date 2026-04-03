@@ -1,29 +1,29 @@
 #include "GObject.h"
 
-void GObject::RenderOnTFT(TFT_eSPI& tft)
+void GObject::RenderOnTFT(TFT_eSPI& tft, uint16_t outlineColor)
 {
     if (!enabled) return;
     for (auto& coll : myComponents)
     {
-        if (coll->_myCompType != GComponent::ComponentType::Collider) continue;
+        // if (coll->_myCompType != GComponent::ComponentType::Collider) continue;
 
         //auto* col = static_cast<GColliderComp*>(coll.get());
 
         // if (!col) continue;;
-        uint16_t outlineColor =
-        getPhysicsEnabled() ? TFT_RED : TFT_BLUE;
+        // uint16_t outlineColor =
+        // getPhysicsEnabled() ? TFT_RED : TFT_BLUE;
 
         if (coll->renderComponent)
         {
             coll->Render(tft, outlineColor, this);
         }
-
+        clearedScreen = false;
     }
 }
 
 void GObject::ClearTFT(TFT_eSPI& tft, uint16_t color)
 {
-    if (!enabled) return;
+    if (!enabled && !clearedScreen) return;
     for (auto& coll : myComponents)
     {
         // if (coll->_myCompType != GComponent::ComponentType::Collider) continue;
@@ -36,4 +36,5 @@ void GObject::ClearTFT(TFT_eSPI& tft, uint16_t color)
             coll->Clear(tft,color);
         }
     }
+    clearedScreen = true;
 }

@@ -22,7 +22,7 @@ void GPhysics::Tick(float DeltaTime)
     for (auto& obj : myScene->sceneObjects)
     {
         if (!obj->getPhysicsEnabled() || !obj->enabled) continue;
-        obj->velocity = obj->velocity + Vec2D(0,-15.8)*DeltaTime;
+        obj->velocity = obj->velocity + Vec2D(0,gravity)*DeltaTime;
         // obj->setInvMasses();
     }
     Damping(DeltaTime);
@@ -49,6 +49,7 @@ void GPhysics::UpdateSpatialHashGrid()
             grid.InsertCollider(gColliders[i], i);
         //std::cout << i << std::endl;
     }
+    // Serial.println(gColliderCount);
 }
 
 void GPhysics::BroadPhase()
@@ -70,6 +71,7 @@ void GPhysics::BroadPhase()
 
                     if (col.colliding)
                     {
+                        
                         if (!col.col1->trigger && !col.col2->trigger)
                             HandleCollision(col);
 
@@ -532,12 +534,11 @@ void GPhysics::ApplyVelocities(float DeltaTime)
 
 void GPhysics::Damping(float DeltaTime)
 {
-    float linearDamp = 0.1f;
-    float angularDamp = 0.05f;
+
     for (auto& obj : myScene->sceneObjects)
     {
         if (!obj->getPhysicsEnabled() || !obj->enabled) continue;
-        obj->velocity = obj->velocity*(1-linearDamp*DeltaTime);
-        obj->angularVelocity = obj->angularVelocity*(1-angularDamp*DeltaTime);
+        obj->velocity = obj->velocity*(1-linearDamping*DeltaTime);
+        obj->angularVelocity = obj->angularVelocity*(1-angularDamping*DeltaTime);
     }
 }
