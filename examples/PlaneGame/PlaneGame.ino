@@ -38,11 +38,6 @@ SemaphoreHandle_t sceneReset;
 unsigned long execTime;
 unsigned long frameTime;
 
-int conf_selection1 = 0;
-bool display_changed = false;
-
-State currentState = CarGameState;
-
 void drawStatusBar(int fps0, int fps1) {
   uint16_t barH = 12; // Very slim
   uint16_t barW = tft.width();
@@ -192,16 +187,6 @@ void PlaneGame(PlaneScene* planeScene, TFT_eSPI& tft)
         delay(15);
         planeScene->restart_level();
         tft.fillScreen(TFT_BLACK);
-        xSemaphoreGive(sceneReset);
-    }
-     if (btn_R.myButtonState == GInput_Button::ButtonState::ONRELEASE)
-    {
-        xSemaphoreTake(sceneReset, portMAX_DELAY);  
-        delay(15);
-        delete planeScene;
-        CurrentGame = 1;
-        tft.fillScreen(TFT_BLACK);
-        startGame();
         xSemaphoreGive(sceneReset);
     }
 }

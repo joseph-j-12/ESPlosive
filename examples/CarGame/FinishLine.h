@@ -17,6 +17,10 @@ class FinishLineObject : public GObject
     // colliding = fals;
   }
 
+  void RenderOnTFT(TFT_eSPI& tft, uint16_t outlineColor) override
+  {
+    GObject::RenderOnTFT(tft, player_reached ? TFT_YELLOW : TFT_GREEN);
+  }
   private:
   bool colliding;
 };

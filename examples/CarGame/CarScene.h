@@ -10,8 +10,8 @@ class GObject;
 class CarScene : public GScene{
 
     public :
-    void Tick_Objects(float  DeltaTime);
-    void Begin();
+    void Tick_Objects(float  DeltaTime) override;
+    void Begin() override;
     void restart_level();
 
     // private:
