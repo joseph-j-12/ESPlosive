@@ -3,10 +3,7 @@
 #include <ESPlosive.h>
 #include <SPI.h>
 #include <TFT_eSPI.h>
-#include "CarScene.h"
 #include "PlaneScene.h"
-#include "FinishLine.h"
-#include "GInput.h"
 // Use hardware SPI
 TFT_eSPI tft = TFT_eSPI();
 
@@ -18,11 +15,6 @@ const int BTN_B = 27;
 const int BTN_C = 14;
 const int BTN_D = 12;
 
-
-
-float scrollx = 0;
-float scrolly = 0;
-
 unsigned long lastMillis;
 unsigned long frameCount = 0;
 unsigned int framesPerSecond;
@@ -31,7 +23,6 @@ unsigned int framesPerSecondDisplay;
 unsigned long lastMillisDisplay;
 unsigned long frameCountDisplay = 0;
 
-CarScene* myScene;
 PlaneScene* planeScene;
 
 GInput_JoyStick joy(JX,JY);
@@ -49,15 +40,6 @@ unsigned long frameTime;
 
 int conf_selection1 = 0;
 bool display_changed = false;
-int carGameLevelLength = 0;
-int carGameLevelDiff = 1;
-enum State{
-    MENU,
-    CarGameState,
-    CarGameConfState
-};
-
-int CurrentGame = 2; //0 for menu, 1 for car, 2 for shooter
 
 State currentState = CarGameState;
 
@@ -95,19 +77,9 @@ void Task1code( void * parameter) {
   while (true)
   {
     xSemaphoreTake(sceneReset, portMAX_DELAY);
-    
-    if (CurrentGame == 1)
-    {
-        if (currentState == CarGameState)
-        CarGameDisplay();
-        else if (currentState == CarGameConfState)
-        CarGameConf();
-    }
-    else if (CurrentGame == 2)
-    {
-        PlaneGameDisplay();
+    PlaneGameDisplay();
         
-    }
+
     xSemaphoreGive(sceneReset);
     delay(5);
     
@@ -134,101 +106,12 @@ void PlaneGameDisplay()
     }
 }
 
-void CarGameConf()
-{
-    // xSemaphoreTake(sceneReset, portMAX_DELAY);
-    if (display_changed)
-    {
-    tft.fillScreen(TFT_BLACK);
-    display_changed = false;
-    }
-    if (currentState != CarGameConfState) {
-        // xSemaphoreGive(sceneReset);
-        return;
-    }
-    // if (conf_selection1 > 1)
-    // conf_selection1 = 0;
-    tft.setCursor(25,25);
-    tft.setTextSize(2);
-    tft.print("Car Game Config");
-
-    tft.setCursor(25,75);
-    tft.setTextSize(2);
-    tft.print("Level length :");
-    tft.setCursor(25,95);
-    if (carGameLevelLength == 0)
-        tft.print("short");
-    if (carGameLevelLength == 1)
-        tft.print("medium");
-    if (carGameLevelLength == 2)
-        tft.print("long");
-
-
-    tft.setCursor(25,135);
-    tft.print("Level difficulty :");
-    tft.setCursor(25,155);
-    if (carGameLevelDiff == 0)
-        tft.print("easy");
-    if (carGameLevelDiff == 1)
-        tft.print("medium");
-    if (carGameLevelDiff == 2)
-        tft.print("hard");
-    
-    tft.fillCircle(0,75 + conf_selection1*60, 10, TFT_WHITE);
-    xSemaphoreGive(sceneReset);
-}
-
-void CarGameDisplay()
-{
-    if (!myScene) return;
-    // xSemaphoreTake(sceneReset, portMAX_DELAY);
-    frameCountDisplay++; 
-    if ((millis() - lastMillisDisplay) >= 1000) {
-        framesPerSecondDisplay = frameCountDisplay;
-        frameCountDisplay = 0;
-        lastMillisDisplay = millis();
-        drawStatusBar(framesPerSecondDisplay, framesPerSecond);
-    }
-
-    myScene->ClearTFT(tft);
-    myScene->RenderOnTFT(tft);
-    // clearColliders(myScene, tft);
-    // renderColliders(myScene, tft);
-
-    if (myScene)
-    {
-        if (myScene->finishLine->player_reached)
-        {
-            tft.setTextSize(5);
-            tft.setCursor(25,100);
-            tft.print("You Won!");
-        }
-    }     
-    // xSemaphoreGive(sceneReset);
-}
-
 void startGame()
 {
-    if (CurrentGame == 1)
-    {
-        myScene =  new CarScene();
-        myScene->terrain_length = 25 + carGameLevelLength*30;
-        myScene->difficulty = carGameLevelDiff;
-        
-        myScene->Begin();
-        myScene->joy = &joy;
-        myScene->btn_U = &btn_U;
-        myScene->btn_L = &btn_L;
-    }
-    if (CurrentGame == 2)
-    {
         planeScene =  new PlaneScene();
        
         planeScene->Begin();
         planeScene->joy = &joy;
-        // planeScene->btn_U = &btn_U;
-        // planeScene->btn_L = &btn_L;
-    }
 }
 void setup() {
 
@@ -272,22 +155,12 @@ void setup() {
         btn_U.Tick();
         btn_D.Tick();
         btn_R.Tick();
-        
-        if (CurrentGame == 1)
-        {
-            if (currentState == CarGameState)
-            CarGame(myScene, tft);
 
-            else if (currentState == CarGameConfState)
-            CarGameConf(myScene, tft);
-        }
-        else if (CurrentGame == 2)
-        {
-            planeScene->Tick_Physics(0.014);
-            planeScene->Tick_Objects(0.014);
+        planeScene->Tick_Physics(0.014);
+        planeScene->Tick_Objects(0.014);
 
-            PlaneGame(planeScene, tft);
-        }
+        PlaneGame(planeScene, tft);
+
 
         frameCount++; 
         
@@ -300,8 +173,6 @@ void setup() {
             lastMillis = millis();
         }
         
-        
-
         frameTime = micros() - execTime;
         if (frameTime >= 2000){
             frameTime = 2000;
@@ -313,50 +184,6 @@ void setup() {
     
 
 }
-
-void CarGameConf(CarScene* myScene, TFT_eSPI& tft)
-{
-    if (btn_D.myButtonState == GInput_Button::ButtonState::ONRELEASE)
-    {
-        xSemaphoreTake(sceneReset, portMAX_DELAY);  
-        delay(15);
-        startGame();
-        // delete myScene;
-        // myScene =  new CarScene();
-        // myScene->terrain_length = 25 + carGameLevelLength*30;
-        // myScene->difficulty = carGameLevelDiff;
-        // myScene->Begin();
-        // myScene->joy = &joy;
-        currentState = CarGameState;
-        tft.fillScreen(TFT_BLACK);
-        xSemaphoreGive(sceneReset);
-    }
-
-    if (btn_R.myButtonState == GInput_Button::ButtonState::ONRELEASE)
-    {
-        if (conf_selection1 == 0)
-        {
-            carGameLevelLength += 1;
-            carGameLevelLength %= 3;
-            display_changed = true;
-        }
-        else if (conf_selection1 == 1)
-        {
-            carGameLevelDiff += 1;
-            carGameLevelDiff %= 3;
-            Serial.println(carGameLevelDiff);
-            display_changed = true;
-        }
-    }
-
-    if (btn_U.myButtonState == GInput_Button::ButtonState::ONRELEASE)
-    {
-        conf_selection1 += 1;
-        conf_selection1 %= 2;
-        display_changed = true;
-    }
-}
-
 void PlaneGame(PlaneScene* planeScene, TFT_eSPI& tft)
 {
     if (btn_L.myButtonState == GInput_Button::ButtonState::ONRELEASE)
@@ -377,63 +204,6 @@ void PlaneGame(PlaneScene* planeScene, TFT_eSPI& tft)
         startGame();
         xSemaphoreGive(sceneReset);
     }
-}
-void CarGame(CarScene* myScene, TFT_eSPI& tft)
-{
-    if (!myScene) return;
-    scrollx = myScene->cam.position.X;
-    scrolly = myScene->cam.position.Y;
-
-    myScene->Tick_Physics(0.014);
-    myScene->Tick_Objects(0.014);
-
-    if (btn_L.myButtonState == GInput_Button::ButtonState::ONRELEASE)
-    {
-        xSemaphoreTake(sceneReset, portMAX_DELAY);  
-        delay(15);
-        delete myScene;
-        // myScene =  new CarScene();
-        // myScene->terrain_length = 25 + carGameLevelLength*30;
-        // myScene->difficulty = carGameLevelDiff;
-        // myScene->Begin();
-        // myScene->joy = &joy;
-        startGame();
-        Serial.println("restart");
-        tft.fillScreen(TFT_BLACK);
-        xSemaphoreGive(sceneReset);
-    }
-
-    if (btn_U.myButtonState == GInput_Button::ButtonState::ONRELEASE)
-    {
-        xSemaphoreTake(sceneReset, portMAX_DELAY);  
-        delay(15);
-        myScene->restart_level();
-        tft.fillScreen(TFT_BLACK);
-        xSemaphoreGive(sceneReset);
-    }
-
-    if (btn_D.myButtonState == GInput_Button::ButtonState::ONRELEASE)
-    {
-        xSemaphoreTake(sceneReset, portMAX_DELAY);  
-        delay(15);
-        delete myScene;
-        currentState = CarGameConfState;
-        tft.fillScreen(TFT_BLACK);
-        display_changed = true;
-        xSemaphoreGive(sceneReset);
-    }
-
-    if (btn_R.myButtonState == GInput_Button::ButtonState::ONRELEASE)
-    {
-        xSemaphoreTake(sceneReset, portMAX_DELAY);  
-        delay(15);
-        delete myScene;
-        CurrentGame = 2;
-        tft.fillScreen(TFT_BLACK);
-        startGame();
-        xSemaphoreGive(sceneReset);
-    }
-
 }
 
 void loop()
